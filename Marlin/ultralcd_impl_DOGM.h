@@ -47,7 +47,7 @@
 #include "dogm_bitmaps.h"
 #include "utility.h"
 #include "duration_t.h"
-
+#include "printcounter.h"
 #include <U8glib.h>
 
 #if ENABLED(SHOW_BOOTSCREEN) && ENABLED(SHOW_CUSTOM_BOOTSCREEN)
@@ -480,7 +480,6 @@ u8g.setPrintPos(50,8);
 //Filament needed  
     u8g.setPrintPos(29,18);
   u8g.print("FN: ");
-
   //Total spool lenght
       u8g.setPrintPos(29,28);
   u8g.print("TS: ");
@@ -508,7 +507,6 @@ u8g.setPrintPos(50,8);
   }
 
   #if ENABLED(SDSUPPORT)
-
     //
     // SD Card Symbol
     //
@@ -538,7 +536,16 @@ u8g.setPrintPos(50,8);
       );
 
     if (IS_SD_PRINTING) {
-
+  //Filament need(Paliddo)
+  float fn = print_job_timer.filo_necessario/1000;
+      u8g.setPrintPos(50,18);
+      if(fn>10){
+        u8g.print(fn,0);
+      u8g.print("m");
+      }else{
+      u8g.print(fn,1);
+      u8g.print("m");
+      }
       //
       // Progress bar solid part
       //
@@ -554,16 +561,12 @@ u8g.setPrintPos(50,8);
       //
 
       #if ENABLED(DOGM_SD_PERCENT)
+      
         if (PAGE_CONTAINS(41, 48)) {
           // Percent complete
           u8g.setPrintPos(55, 48);
           u8g.print(itostr3(card.percentDone()));
           u8g.print('%');
-          //Filament need
-       float fn = print_job_timer.filneed/1000;
-      u8g.setPrintPos(50,18);
-      u8g.print(fn,1);
-      u8g.print("m");
     
         }
       #endif
@@ -578,7 +581,6 @@ u8g.setPrintPos(50,8);
     #else
       #define SD_DURATION_X (LCD_PIXEL_WIDTH - len * DOG_CHAR_WIDTH)
     #endif
-
     if (PAGE_CONTAINS(41, 48)) {
 
       char buffer[10];

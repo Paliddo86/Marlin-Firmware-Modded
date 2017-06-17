@@ -229,7 +229,7 @@
  */
 
 #include "Marlin.h"
-
+#include "MarlinConfig.h"
 #include "ultralcd.h"
 #include "planner.h"
 #include "stepper.h"
@@ -244,6 +244,7 @@
 #include "duration_t.h"
 #include "types.h"
 #include "gcode.h"
+#include "printcounter.h"
 
 #if HAS_ABL
   #include "vector_3.h"
@@ -9207,9 +9208,11 @@ inline void gcode_M503() {
 /**
  * M601 Load Filament need from gcode
  */
+
  inline void gcode_M601() {
-if (parser.seen('F'))
-    print_job_timer.filneed = parser.value_float();
+  if (parser.seen('F')) {
+    print_job_timer.filo_necessario = parser.value_float();
+  }
   }
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
@@ -10365,6 +10368,9 @@ void process_next_command() {
           gcode_M30(); break;
         case 32: // M32: Select file and start SD print
           gcode_M32(); break;
+          case 601://Load Filament need from gcode
+        gcode_M601();
+        break;
 
         #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
           case 33: // M33: Get the long full path to a file or folder
@@ -10415,7 +10421,6 @@ void process_next_command() {
         case 78: // M78: Show print statistics
           gcode_M78(); break;
       #endif
-
       #if ENABLED(M100_FREE_MEMORY_WATCHER)
         case 100: // M100: Free Memory Report
           gcode_M100();
@@ -10826,13 +10831,10 @@ void process_next_command() {
         case 600: // M600: Pause for filament change
           gcode_M600();
           break;
-
-        case 601://Load Filament need from gcode
-        gcode_M601();
-        break;
           
       #endif // ADVANCED_PAUSE_FEATURE
-
+      
+        
       #if ENABLED(DUAL_X_CARRIAGE) || ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
         case 605: // M605: Set Dual X Carriage movement mode
           gcode_M605();
