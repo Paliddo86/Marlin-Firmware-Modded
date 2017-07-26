@@ -582,13 +582,29 @@ u8g.setPrintPos(50,8);
       #define SD_DURATION_X (LCD_PIXEL_WIDTH - len * DOG_CHAR_WIDTH)
     #endif
     if (PAGE_CONTAINS(41, 48)) {
-
-      char buffer[10];
-      duration_t elapsed = print_job_timer.duration();
-      bool has_days = (elapsed.value > 60*60*24L);
-      uint8_t len = elapsed.toDigital(buffer, has_days);
+    //
+    // Elapsed Time
+    //
+//      char buffer[10];
+//      duration_t elapsed = print_job_timer.duration();
+//      bool has_days = (elapsed.value > 60*60*24L);
+//      uint8_t len = elapsed.toDigital(buffer, has_days);
+//      u8g.setPrintPos(SD_DURATION_X, 48);
+//      lcd_print(buffer);
+    //
+    // Remaining Time(Paliddo)
+    //
+    float fn=print_job_timer.filo_necessario;
+    double cfu = print_job_timer.current_filament_used;
+    duration_t elapsed = print_job_timer.duration();
+      char buffer[10]; 
+      duration_t remaining = (elapsed.value * fn / cfu) - elapsed.value;
+      bool has_days = (remaining.value > 60*60*24L);
+      uint8_t len = remaining.toDigital(buffer, has_days);
       u8g.setPrintPos(SD_DURATION_X, 48);
       lcd_print(buffer);
+
+      
     }
 
   #endif
